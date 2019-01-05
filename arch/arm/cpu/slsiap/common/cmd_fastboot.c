@@ -1936,7 +1936,7 @@ static int do_fastboot(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]
 
 U_BOOT_CMD(
 	fastboot,	4,	1,	do_fastboot,
-	"fastboot- use USB Fastboot protocol\n",
+	"fastboot- use USB Fastboot protocol",
 	"[inactive timeout]\n"
 	"    - Run as a fastboot usb device.\n"
 	"    - The optional inactive timeout is the decimal seconds before\n"
@@ -2289,7 +2289,7 @@ err_sdfuse:
 
 U_BOOT_CMD(
 	sdfuse,		2,	1,	do_sdfuse,
-	"sdfuse  - read images from FAT partition of SD card and write them to booting device.\n",
+	"sdfuse  - read images from FAT partition of SD card and write them to booting device.",
 	"sdfuse forceupdate - force update from sdcard.\n"
 );
 #endif	// CONFIG_FASTBOOT_SDFUSE

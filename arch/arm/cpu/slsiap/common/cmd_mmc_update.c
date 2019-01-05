@@ -176,7 +176,7 @@ usage:
 
 U_BOOT_CMD(
 	update_mmc, CONFIG_SYS_MAXARGS, 1,	do_update_mmc,
-	"update mmc data\n",
+	"update mmc data",
 	"<dev no> <type> <mem> <addr> <length>\n"
 	"    - type :  2ndboot | boot | raw | part \n\n"
 	"update_mmc <dev no> boot 'mem' 'addr' 'length' [load addr]\n"
