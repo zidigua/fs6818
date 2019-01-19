@@ -59,7 +59,7 @@
  */
 #define CONFIG_RELOC_TO_TEXT_BASE												/* Relocate u-boot code to TEXT_BASE */
 
-#define	CONFIG_SYS_TEXT_BASE 			0x43C00000
+#define	CONFIG_SYS_TEXT_BASE 			0x73C00000
 #define	CONFIG_SYS_INIT_SP_ADDR			CONFIG_SYS_TEXT_BASE					/* init and run stack pointer */
 
 /* malloc() pool */

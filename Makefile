@@ -291,7 +291,6 @@ export KBUILD_CHECKSRC KBUILD_SRC KBUILD_EXTMOD
 #
 # If KBUILD_VERBOSE equals 0 then the above command will be hidden.
 # If KBUILD_VERBOSE equals 1 then the above command is displayed.
-
 ifeq ($(KBUILD_VERBOSE),1)
   quiet =
   Q =

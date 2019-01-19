@@ -1,6 +1,6 @@
 include $(srctree)/config.mk
 
-extra-y := start.o vectors.o
+extra-y := start.o
 
 obj-y 	+= low_init.o
 obj-y 	+= cpu.o
