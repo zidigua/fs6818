@@ -266,14 +266,13 @@ ENDPROC(cpu_init_crit)
  *
  *************************************************************************/
 ENTRY(blue_led_on)
-led_on:
+led_onblue:
 	ldr r5, =0xC001B020
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)
 	orr r6, r6, #(0x2<<24)	// 设置为普通GPIO功能
 	str r6, [r5]
 
-	
 	ldr r5, =0xC001B004
 	ldr r6, [r5]
 	orr r6, r6, #(1<<12)	// 设置为输出模式
@@ -281,18 +280,18 @@ led_on:
 
 	ldr r5, =0xC001B000
 	ldr r6, [r5]
-	orr r6, #(1<<12)	// 输出高电平
+	orr r6, #(1<<12)		// 输出高电平
 	str r6, [r5]
 	mov pc, lr
 ENDPROC(blue_led_on)
 
-blue_led_off:
+ENTRY(blue_led_off)
+led_offblue:
 	ldr r5, =0xC001B020
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)
 	orr r6, r6, #(0x2<<24)	// 设置为普通GPIO功能
 	str r6, [r5]
-
 	
 	ldr r5, =0xC001B004
 	ldr r6, [r5]
@@ -301,10 +300,48 @@ blue_led_off:
 
 	ldr r5, =0xC001B000
 	ldr r6, [r5]
-	and r6, #(~(1<<12))	// 输出高电平
+	and r6, #(~(1<<12))		// 输出低电平
 	str r6, [r5]
 	mov pc, lr
+ENDPROC(blue_led_off)
 
+ENTRY(red_led_on)
+led_onred:
+	ldr r5, =0xC001A024
+	ldr r6, [r5]
+	bic r6, r6, #(0x3<<24)	// 设置为普通GPIO功能
+	str r6, [r5]
+
+	ldr r5, =0xC001A004
+	ldr r6, [r5]
+	orr r6, r6, #(1<<28)	// 设置为输出模式
+	str r6, [r5]
+
+	ldr r5, =0xC001A000
+	ldr r6, [r5]
+	orr r6, #(1<<28)		// 输出高电平
+	str r6, [r5]
+	mov pc, lr
+ENDPROC(red_led_on)
+
+ENTRY(red_led_off)
+led_offred:
+	ldr r5, =0xC001A024
+	ldr r6, [r5]
+	bic r6, r6, #(0x3<<24)	// 设置为普通GPIO功能
+	str r6, [r5]
+
+	ldr r5, =0xC001A004
+	ldr r6, [r5]
+	orr r6, r6, #(1<<28)	// 设置为输出模式
+	str r6, [r5]
+
+	ldr r5, =0xC001A000
+	ldr r6, [r5]
+	bic r6, #(1<<28)		// 输出低电平
+	str r6, [r5]
+	mov pc, lr
+ENDPROC(red_led_off)
 
 /*
  *  vectors - Generic ARM exception table code
