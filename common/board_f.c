@@ -865,7 +865,6 @@ static init_fnc_t init_sequence_f[] = {
 #if defined(CONFIG_MISC_INIT_F)
 	misc_init_f,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SYS_I2C)
 	init_func_i2c,
 #endif
@@ -887,16 +886,13 @@ static init_fnc_t init_sequence_f[] = {
 #ifdef CONFIG_POST
 	post_init_f,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #if defined(CONFIG_SYS_DRAM_TEST)
 	testdram,
 #endif /* CONFIG_SYS_DRAM_TEST */
-	INIT_FUNC_WATCHDOG_RESET
 
 #ifdef CONFIG_POST
 	init_post,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 	/*
 	 * Now that we have DRAM mapped and working, we can
 	 * relocate the code and continue running from DRAM.
@@ -943,14 +939,12 @@ static init_fnc_t init_sequence_f[] = {
 	show_dram_config,
 #ifdef CONFIG_PPC
 	setup_board_part1,
-	INIT_FUNC_WATCHDOG_RESET
 	setup_board_part2,
 #endif
 	display_new_sp,
 #ifdef CONFIG_SYS_EXTBDINFO
 	setup_board_extra,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 	reloc_fdt,
 	setup_reloc,
 #if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)

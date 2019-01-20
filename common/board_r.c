@@ -750,7 +750,6 @@ init_fnc_t init_sequence_r[] = {
 	initr_reloc_global_data,
 	initr_serial,
 	initr_announce,
-	INIT_FUNC_WATCHDOG_RESET
 #ifdef CONFIG_PPC
 	initr_trap,
 #endif
@@ -760,14 +759,12 @@ init_fnc_t init_sequence_r[] = {
 #if defined(CONFIG_BOARD_EARLY_INIT_R)
 	board_early_init_r,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #ifdef CONFIG_LOGBUFFER
 	initr_logbuffer,
 #endif
 #ifdef CONFIG_POST
 	initr_post_backlog,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #ifdef CONFIG_SYS_DELAYED_ICACHE
 	initr_icache_enable,
 #endif
@@ -797,7 +794,6 @@ init_fnc_t init_sequence_r[] = {
 #ifndef CONFIG_SYS_NO_FLASH
 	initr_flash,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #if defined(CONFIG_PPC) || defined(CONFIG_X86)
 	/* initialize higher level parts of CPU like time base and timers */
 	cpu_init_r,
@@ -821,7 +817,6 @@ init_fnc_t init_sequence_r[] = {
 	initr_dataflash,
 #endif
 	initr_env,
-	INIT_FUNC_WATCHDOG_RESET
 	initr_secondary_cpu,
 #ifdef CONFIG_SC3
 	initr_sc3_read_eeprom,
@@ -832,7 +827,6 @@ init_fnc_t init_sequence_r[] = {
 #if defined(CONFIG_ID_EEPROM) || defined(CONFIG_SYS_I2C_MAC_OFFSET)
 	mac_read_from_eeprom,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #if defined(CONFIG_PCI) && !defined(CONFIG_SYS_EARLY_PCI_INIT)
 	/*
 	 * Do pci configuration
@@ -857,7 +851,6 @@ init_fnc_t init_sequence_r[] = {
 #ifdef CONFIG_HERMES
 	initr_hermes_start,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #ifdef CONFIG_CMD_KGDB
 	initr_kgdb,
 #endif
@@ -882,18 +875,15 @@ init_fnc_t init_sequence_r[] = {
 	board_late_init,
 #endif
 #ifdef CONFIG_CMD_SCSI
-	INIT_FUNC_WATCHDOG_RESET
 	initr_scsi,
 #endif
 #ifdef CONFIG_CMD_DOC
-	INIT_FUNC_WATCHDOG_RESET
 	initr_doc,
 #endif
 #ifdef CONFIG_BITBANGMII
 	initr_bbmii,
 #endif
 #ifdef CONFIG_CMD_NET
-	INIT_FUNC_WATCHDOG_RESET
 	initr_net,
 #endif
 #ifdef CONFIG_POST
@@ -906,7 +896,6 @@ init_fnc_t init_sequence_r[] = {
 	initr_ide,
 #endif
 #ifdef CONFIG_LAST_STAGE_INIT
-	INIT_FUNC_WATCHDOG_RESET
 	/*
 	 * Some parts can be only initialized if all others (like
 	 * Interrupts) are up and running (i.e. the PC-style ISA
@@ -915,7 +904,6 @@ init_fnc_t init_sequence_r[] = {
 	last_stage_init,
 #endif
 #ifdef CONFIG_CMD_BEDBUG
-	INIT_FUNC_WATCHDOG_RESET
 	initr_bedbug,
 #endif
 #if defined(CONFIG_PRAM) || defined(CONFIG_LOGBUFFER)

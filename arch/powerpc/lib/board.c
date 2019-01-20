@@ -289,11 +289,9 @@ static init_fnc_t *init_sequence[] = {
 	prt_mpc5xxx_clks,
 #endif /* CONFIG_MPC5xxx */
 	checkboard,
-	INIT_FUNC_WATCHDOG_INIT
 #if defined(CONFIG_MISC_INIT_F)
 	misc_init_f,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SYS_I2C)
 	init_func_i2c,
 #endif
@@ -303,12 +301,10 @@ static init_fnc_t *init_sequence[] = {
 #ifdef CONFIG_POST
 	post_init_f,
 #endif
-	INIT_FUNC_WATCHDOG_RESET
 	init_func_ram,
 #if defined(CONFIG_SYS_DRAM_TEST)
 	testdram,
 #endif /* CONFIG_SYS_DRAM_TEST */
-	INIT_FUNC_WATCHDOG_RESET
 	NULL,	/* Terminate this list */
 };
 

@@ -17,8 +17,8 @@
  *
  *************************************************************************
  */
-	.globl	_stext
-_stext:
+	.globl _start	
+_start:
 	b 	reset
 	ldr	pc, _undefined_instruction
 	ldr	pc, _software_interrupt
@@ -55,15 +55,15 @@ TEXT_BASE:
  */
 .globl _bss_start_ofs
 _bss_start_ofs:
-	.word __bss_start - _stext
+	.word __bss_start - _start
 
 .globl _bss_end_ofs
 _bss_end_ofs:
-	.word __bss_end - _stext
+	.word __bss_end - _start
 
 .globl _end_ofs
 _end_ofs:
-	.word _end - _stext
+	.word _end - _start
 
 /*
  *************************************************************************
@@ -102,14 +102,14 @@ relocate_to_text:
 	 * relocate u-boot code on memory to text base
 	 * for nexell arm core (add by jhkim)
 	 */
-	adr	r0, _stext				/* r0 <- current position of code   */
+	adr	r0, _start				/* r0 <- current position of code   */
 	ldr	r1, TEXT_BASE			/* test if we run from flash or RAM */
 	cmp r0, r1              	/* don't reloc during debug         */
 	beq clear_bss
 
 	ldr	r2, _bss_start_ofs
 	add	r2, r0, r2				/* r2 <- source end address         */
-
+	
 copy_loop_text:
 	ldmia	r0!, {r3-r10}		/* copy from source address [r0]    */
 	stmia	r1!, {r3-r10}		/* copy to   target address [r1]    */
@@ -181,7 +181,7 @@ ENTRY(c_runtime_cpu_setup)
  * Move vector table
  */
 	/* Set vector address in CP15 VBAR register */
-	ldr     r0, =_stext
+	ldr     r0, =_start
 	mcr     p15, 0, r0, c12, c0, 0  @Set VBAR
 
 	bx	lr
@@ -260,6 +260,50 @@ ENTRY(cpu_init_crit)
 ENDPROC(cpu_init_crit)
 #endif
 
+/*************************************************************************
+ *
+ *  LED show status r5 and r6 will be modified
+ *
+ *************************************************************************/
+blue_led_on:
+	ldr r5, =0xC001B020
+	ldr r6, [r5]
+	bic r6, r6, #(0x3<<24)
+	orr r6, r6, #(0x2<<24)	// 设置为普通GPIO功能
+	str r6, [r5]
+
+	
+	ldr r5, =0xC001B004
+	ldr r6, [r5]
+	orr r6, r6, #(1<<12)	// 设置为输出模式
+	str r6, [r5]
+
+	ldr r5, =0xC001B000
+	ldr r6, [r5]
+	orr r6, #(1<<12)	// 输出高电平
+	str r6, [r5]
+	mov pc, lr
+
+blue_led_off:
+	ldr r5, =0xC001B020
+	ldr r6, [r5]
+	bic r6, r6, #(0x3<<24)
+	orr r6, r6, #(0x2<<24)	// 设置为普通GPIO功能
+	str r6, [r5]
+
+	
+	ldr r5, =0xC001B004
+	ldr r6, [r5]
+	orr r6, r6, #(1<<12)	// 设置为输出模式
+	str r1, [r0]
+
+	ldr r5, =0xC001B000
+	ldr r6, [r5]
+	and r6, #(~(1<<12))	// 输出高电平
+	str r6, [r5]
+	mov pc, lr
+
+
 /*
  *  vectors - Generic ARM exception table code
  */
@@ -275,13 +319,13 @@ ENDPROC(cpu_init_crit)
 /* IRQ stack memory (calculated at run-time) + 8 bytes */
 .globl _IRQ_STACK_START_IN_
 _IRQ_STACK_START_IN_:
-	.word	0x0badc0de
+	.word 0x0badc0de
 
 #ifdef CONFIG_USE_IRQ
 /* IRQ stack memory (calculated at run-time) */
 .globl _IRQ_STACK_START
 _IRQ_STACK_START:
-	.word	0x0badc0de
+	.word 0x0badc0de
 
 /* IRQ stack memory (calculated at run-time) */
 .globl _FIQ_STACK_START

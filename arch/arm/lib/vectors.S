@@ -16,12 +16,12 @@
 /*
  *************************************************************************
  *
- * Symbol _start is referenced elsewhere, so make it global
+ * Symbol _stext is referenced elsewhere, so make it global
  *
  *************************************************************************
  */
 
-.globl _start
+.globl _stext
 
 /*
  *************************************************************************
@@ -47,7 +47,7 @@
 	.word	CONFIG_SYS_DV_NOR_BOOT_CFG
 #endif
 
-_start:
+_stext:
 	ldr	pc, _reset
 	ldr	pc, _undefined_instruction
 	ldr	pc, _software_interrupt
