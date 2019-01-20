@@ -265,7 +265,8 @@ ENDPROC(cpu_init_crit)
  *  LED show status r5 and r6 will be modified
  *
  *************************************************************************/
-blue_led_on:
+ENTRY(blue_led_on)
+led_on:
 	ldr r5, =0xC001B020
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)
@@ -283,6 +284,7 @@ blue_led_on:
 	orr r6, #(1<<12)	// 输出高电平
 	str r6, [r5]
 	mov pc, lr
+ENDPROC(blue_led_on)
 
 blue_led_off:
 	ldr r5, =0xC001B020
