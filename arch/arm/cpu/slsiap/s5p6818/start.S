@@ -85,6 +85,11 @@ reset:
 	orr	r0, r0, #0xd3
 	msr	cpsr,r0
 
+	/* disable IRQ/FIQ interrupts */
+	mrs r0, cpsr
+	bic r0, r0, #0xc0
+	msr cpsr, r0
+
 	/* disable watchdog */
 	ldr	r0, =0xC0019000
 	mov	r1, #0
