@@ -287,7 +287,7 @@ ENDPROC(cpu_init_crit)
  *
  *************************************************************************/
 ENTRY(blue_led_on)
-led_onblue:
+	stmfd sp!, {r0-r12, lr}
 	ldr r5, =0xC001B020
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)
@@ -303,11 +303,11 @@ led_onblue:
 	ldr r6, [r5]
 	orr r6, #(1<<12)		// 输出高电平
 	str r6, [r5]
-	mov pc, lr
+	ldmfd sp!, {r0-r12, pc}
 ENDPROC(blue_led_on)
 
 ENTRY(blue_led_off)
-led_offblue:
+	stmfd sp!, {r0-r12, lr}
 	ldr r5, =0xC001B020
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)
@@ -317,17 +317,17 @@ led_offblue:
 	ldr r5, =0xC001B004
 	ldr r6, [r5]
 	orr r6, r6, #(1<<12)	// 设置为输出模式
-	str r1, [r0]
+	str r6, [r5]
 
 	ldr r5, =0xC001B000
 	ldr r6, [r5]
 	and r6, #(~(1<<12))		// 输出低电平
 	str r6, [r5]
-	mov pc, lr
+	ldmfd sp!, {r0-r12, pc}
 ENDPROC(blue_led_off)
 
 ENTRY(red_led_on)
-led_onred:
+	stmfd sp!, {r0-r12, lr}
 	ldr r5, =0xC001A024
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)	// 设置为普通GPIO功能
@@ -342,11 +342,11 @@ led_onred:
 	ldr r6, [r5]
 	orr r6, #(1<<28)		// 输出高电平
 	str r6, [r5]
-	mov pc, lr
+	ldmfd sp!, {r0-r12, pc}
 ENDPROC(red_led_on)
 
 ENTRY(red_led_off)
-led_offred:
+	stmfd sp!, {r0-r12, lr}
 	ldr r5, =0xC001A024
 	ldr r6, [r5]
 	bic r6, r6, #(0x3<<24)	// 设置为普通GPIO功能
@@ -361,8 +361,46 @@ led_offred:
 	ldr r6, [r5]
 	bic r6, #(1<<28)		// 输出低电平
 	str r6, [r5]
-	mov pc, lr
+	ldmfd sp!, {r0-r12, pc}
 ENDPROC(red_led_off)
+
+ENTRY(green_led_on)
+	stmfd sp!, {r0-r12, lr}
+	ldr r5, =0xC001E020
+	ldr r6, [r5]
+	bic r6, r6, #(0x3<<26)	// 设置为普通GPIO功能
+	str r6, [r5]
+
+	ldr r5, =0xC001E004
+	ldr r6, [r5]
+	orr r6, r6, #(1<<13)	// 设置为输出模式
+	str r6, [r5]
+
+	ldr r5, =0xC001E000
+	ldr r6, [r5]
+	orr r6, #(1<<13)		// 输出高电平
+	str r6, [r5]
+	ldmfd sp!, {r0-r12, pc}
+ENDPROC(green_led_on)
+
+ENTRY(green_led_off)
+	stmfd sp!, {r0-r12, lr}
+	ldr r5, =0xC001E020
+	ldr r6, [r5]
+	bic r6, r6, #(0x3<<26)	// 设置为普通GPIO功能
+	str r6, [r5]
+
+	ldr r5, =0xC001E004
+	ldr r6, [r5]
+	orr r6, r6, #(1<<13)	// 设置为输出模式
+	str r6, [r5]
+
+	ldr r5, =0xC001E000
+	ldr r6, [r5]
+	bic r6, #(1<<13)		// 输出低电平
+	str r6, [r5]
+	ldmfd sp!, {r0-r12, pc}
+ENDPROC(green_led_off)
 
 /*
  *  vectors - Generic ARM exception table code

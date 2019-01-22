@@ -118,6 +118,7 @@
 #define CONFIG_CMD_SOURCE   /* "source" command support */
 #define CONFIG_CMD_BOOTD	/* "boot" command support */
 #define CONFIG_CMD_LOADB	/* "loadb" command support */
+#define CONFIG_CMD_LED		/* "led" command support */
 #define	CONFIG_CMD_MEMTEST
 
 /*-----------------------------------------------------------------------
