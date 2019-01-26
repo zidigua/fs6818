@@ -803,8 +803,8 @@ u-boot.bin: u-boot FORCE
 	$(call if_changed,objcopy)
 	$(call DO_STATIC_RELA,$<,$@,$(CONFIG_SYS_TEXT_BASE))
 	$(BOARD_SIZE_CHECK)
-	./tools/mk6818 ubootpak.bin nsih.txt 2ndboot u-boot.bin
-	cat ./512B ubootpak.bin > win-uboot.bin
+	$(CURDIR)/tools/mk6818 $(CURDIR)/ubootpak.bin $(srctree)/nsih.txt $(srctree)/2ndboot $(CURDIR)/u-boot.bin
+	cat $(srctree)/512B $(CURDIR)/ubootpak.bin > $(CURDIR)/win-uboot.bin
 
 u-boot.ldr:	u-boot
 		$(CREATE_LDR_ENV)
