@@ -168,8 +168,8 @@ static int process_nsih(const char * filename, unsigned char * outdata)
 		}
 	}
 
-	printf("NSIH : %d line processed.\n", line + 1);
-	printf("NSIH : %d bytes generated.\n", bytesize);
+//	printf("NSIH : %d line processed.\n", line + 1);
+//	printf("NSIH : %d bytes generated.\n", bytesize);
 
 	fclose(fp);
 	return bytesize;
@@ -282,7 +282,7 @@ int main(int argc, char *argv[])
 	free(buffer);
 	fclose(fp);
 
-	printf("Generate destination file: %s\n", argv[1]);
+//	printf("Generate destination file: %s\n", argv[1]);
 
 	return 0;
 }

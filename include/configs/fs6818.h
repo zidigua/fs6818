@@ -36,7 +36,7 @@
 /*-----------------------------------------------------------------------
  *  u-boot-2014.07
  */
-#define CONFIG_SYS_LDSCRIPT "arch/arm/cpu/slsiap/u-boot.lds"
+#define CONFIG_SYS_LDSCRIPT "arch/arm/cpu/armv8/u-boot.lds"
 #define CONFIG_SYS_GENERIC_BOARD
 
 #define	CONFIG_MACH_S5P6818

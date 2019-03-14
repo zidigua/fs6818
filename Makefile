@@ -195,8 +195,8 @@ VENDOR=
 #########################################################################
 
 # set default to nothing for native builds
-ifeq (arm,arm)
-CROSS_COMPILE ?= arm-none-linux-gnueabi-
+ifeq ($(HOSTARCH),$(ARCH))
+CROSS_COMPILE ?= 
 endif
 
 # SHELL used by kbuild
@@ -326,7 +326,7 @@ include $(srctree)/scripts/Kbuild.include
 AS		= $(CROSS_COMPILE)as
 # Always use GNU ld
 ifneq ($(shell $(CROSS_COMPILE)ld.bfd -v 2> /dev/null),)
-LD		= $(CROSS_COMPILE)ld.bfd
+LD		= $(CROSS_COMPILE)ld
 else
 LD		= $(CROSS_COMPILE)ld
 endif
@@ -653,7 +653,6 @@ libs-y		:= $(patsubst %/, %/built-in.o, $(libs-y))
 u-boot-init := $(head-y)
 u-boot-main := $(libs-y)
 
-
 # Add GCC lib
 ifdef CONFIG_USE_PRIVATE_LIBGCC
 ifeq ($(CONFIG_USE_PRIVATE_LIBGCC),y)
@@ -803,7 +802,7 @@ u-boot.bin: u-boot FORCE
 	$(call if_changed,objcopy)
 	$(call DO_STATIC_RELA,$<,$@,$(CONFIG_SYS_TEXT_BASE))
 	$(BOARD_SIZE_CHECK)
-	$(CURDIR)/tools/mk6818 $(CURDIR)/ubootpak.bin $(srctree)/nsih.txt $(srctree)/2ndboot $(CURDIR)/u-boot.bin
+	$(CURDIR)/tools/mk6818 $(CURDIR)/ubootpak.bin $(srctree)/nsih.txt $(srctree)/S6818_N.bl1 $(CURDIR)/u-boot.bin
 	cat $(srctree)/512B $(CURDIR)/ubootpak.bin > $(CURDIR)/win-uboot.bin
 
 u-boot.ldr:	u-boot
