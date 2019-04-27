@@ -2828,8 +2828,8 @@ void	NX_DPC_SetYCOrder ( U32 ModuleIndex, NX_DPC_YCORDER ycorder )
 	pRegister = __g_ModuleVariables[ModuleIndex].pRegister;
 
 	temp  = pRegister->DPCCTRL1 & (~(0xF<<YCORDER_POS));
-	temp  = (U16)(temp | (ycorder << YCORDER_POS));
-	WriteIO16(&pRegister->DPCCTRL1, temp);
+	temp  = (temp | (ycorder << YCORDER_POS));
+	WriteIO32(&pRegister->DPCCTRL1, temp);
 }
 
 void	NX_DPC_SetLumaGain ( U32 ModuleIndex, U32 LumaGain )
@@ -2841,7 +2841,7 @@ void	NX_DPC_SetLumaGain ( U32 ModuleIndex, U32 LumaGain )
 
 	pRegister = __g_ModuleVariables[ModuleIndex].pRegister;
 
-	WriteIO16(&pRegister->NTSC_CONT, LumaGain);
+	WriteIO32(&pRegister->NTSC_CONT, LumaGain);
 }
 
 

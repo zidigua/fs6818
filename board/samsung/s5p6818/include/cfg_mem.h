@@ -15,8 +15,8 @@
 /*------------------------------------------------------------------------------
  * 	 System memory map
  */
-#define	CFG_MEM_PHY_SYSTEM_BASE			0x40000000	/* System, must be at an evne 2MB boundary (head.S) */
-#define	CFG_MEM_PHY_SYSTEM_SIZE			0x40000000	/* 1GB */
+#define	CFG_MEM_PHY_SYSTEM_BASE			0x40000000UL	/* System, must be at an evne 2MB boundary (head.S) */
+#define	CFG_MEM_PHY_SYSTEM_SIZE			0x40000000UL	/* 1GB */
 //#define	CFG_MEM_PHY_SYSTEM_SIZE			0x80000000	/* 2GB */
 
 #endif /* __CFG_MEM_H__ */

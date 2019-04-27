@@ -24,7 +24,7 @@
 # =========================================================================
 #	Cross compiler
 # =========================================================================
-CROSS_COMPILE := arm-none-linux-gnueabi-
+#CROSS_COMPILE := arm-none-linux-gnueabi-
 
 # prevent GCC-4.6.x (arm-linux-gnueabi-gcc) warning
 CC = $(CROSS_COMPILE)gcc
