@@ -97,7 +97,7 @@
  */
 #define CONFIG_ARCH_CPU_INIT													/* board_init_f->init_sequence, call arch_cpu_init */
 #define	CONFIG_BOARD_EARLY_INIT_F												/* board_init_f->init_sequence, call board_early_init_f */
-//#define	CONFIG_BOARD_LATE_INIT													/* board_init_r, call board_early_init_f */
+#define	CONFIG_BOARD_LATE_INIT													/* board_init_r, call board_early_init_f */
 #define	CONFIG_DISPLAY_CPUINFO													/* board_init_f->init_sequence, call print_cpuinfo */
 #define	CONFIG_SYS_DCACHE_OFF													/* board_init_f, CONFIG_SYS_ICACHE_OFF */
 #define	CONFIG_ARCH_MISC_INIT													/* board_init_r, call arch_misc_init */
