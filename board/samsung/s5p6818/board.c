@@ -139,6 +139,10 @@ static void bd_gpio_init(void)
 		}
 	}
 	red_led_off();
+	// init pwm2 clock 
+	pwm_init(2, 0, 1); 
+	// pwm2 gpio output low level
+	NX_GPIO_SetOutputValue((PAD_GPIO_C + 14) / 23, (PAD_GPIO_C) % 23, 0); 
 }
 
 static void bd_alive_init(void)
