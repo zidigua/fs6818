@@ -32,6 +32,51 @@
 #if defined(CONFIG_S5P_SERIAL)
 void serial_device_init(void)
 {
+	unsigned int *addr = (unsigned int *)(PHY_BASEADDR_RSTCON_MODULE+4);
+
+	/* reset control: Low active ___|---   */
+	*addr = (*addr) & (~(0x3F));
+	*addr = (*addr) | (0x3F);
+
+	/* set clock  for uart0 */
+	struct clk *clk = clk_get(NULL, "nxp-uart.0");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+
+	/* set clock  for uart1 */
+	clk = clk_get(NULL, "nxp-uart.1");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+
+	/* set clock  for uart2 */
+	clk = clk_get(NULL, "nxp-uart.2");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+
+	/* set clock  for uart3 */
+	clk = clk_get(NULL, "nxp-uart.3");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+
+	/* set clock  for uart4 */
+	clk = clk_get(NULL, "nxp-uart.4");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+
+	/* set clock  for uart5 */
+	clk = clk_get(NULL, "nxp-uart.5");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
+	clk_enable(clk);
+
+#if 0
 	#if		(CFG_UART_DEBUG_CH == 0)
 	int id = RESET_ID_UART0;
 	char *dev = "nxp-uart.0";
@@ -62,6 +107,7 @@ void serial_device_init(void)
 	clk_disable(clk);
 	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
 	clk_enable(clk);
+#endif
 }
 #endif
 
