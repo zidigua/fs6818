@@ -75,6 +75,29 @@ void serial_device_init(void)
 	clk_enable(clk);
 	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
 	clk_enable(clk);
+#if 1  // iic  init
+	addr = (unsigned int *)(PHY_BASEADDR_RSTCON_MODULE);
+	*addr = (*addr) & (~(0x7 << 20));
+	*addr = (*addr) | (0x7 << 20);
+
+	/* set clock  for i2c0 */
+	clk = clk_get(NULL, DEV_NAME_I2C".0");
+	clk_disable(clk);
+	clk_set_rate(clk, 25000000);
+	clk_enable(clk);
+
+	/* set clock  for i2c1 */
+	clk = clk_get(NULL, DEV_NAME_I2C".1");
+	clk_disable(clk);
+	clk_set_rate(clk, 25000000);
+	clk_enable(clk);
+
+	/* set clock  for i2c2 */
+	clk = clk_get(NULL, DEV_NAME_I2C".2");
+	clk_disable(clk);
+	clk_set_rate(clk, 25000000);
+	clk_enable(clk);
+#endif	
 
 #if 0
 	#if		(CFG_UART_DEBUG_CH == 0)
