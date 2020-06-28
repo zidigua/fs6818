@@ -75,7 +75,7 @@ void serial_device_init(void)
 	clk_enable(clk);
 	clk_set_rate(clk, CFG_UART_CLKGEN_CLOCK_HZ);
 	clk_enable(clk);
-#if 1  // iic  init
+#if 1  // iic clock init
 	addr = (unsigned int *)(PHY_BASEADDR_RSTCON_MODULE);
 	*addr = (*addr) & (~(0x7 << 20));
 	*addr = (*addr) | (0x7 << 20);
@@ -96,6 +96,30 @@ void serial_device_init(void)
 	clk = clk_get(NULL, DEV_NAME_I2C".2");
 	clk_disable(clk);
 	clk_set_rate(clk, 25000000);
+	clk_enable(clk);
+#endif	
+
+#if 1  // spi clock init
+	addr = (unsigned int *)(PHY_BASEADDR_RSTCON_MODULE + 4);
+	*addr = (*addr) & (~(0x3F << 12));
+	*addr = (*addr) | (0x3f << 12);
+
+	/* set clock  for spi0 */
+	clk = clk_get(NULL, DEV_NAME_SPI".0");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_SPI0_OUT_CLK);
+	clk_enable(clk);
+
+	/* set clock  for spi1 */
+	clk = clk_get(NULL, DEV_NAME_SPI".1");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_SPI1_OUT_CLK);
+	clk_enable(clk);
+
+	/* set clock  for spi2 */
+	clk = clk_get(NULL, DEV_NAME_SPI".2");
+	clk_disable(clk);
+	clk_set_rate(clk, CFG_SPI2_OUT_CLK);
 	clk_enable(clk);
 #endif	
 
