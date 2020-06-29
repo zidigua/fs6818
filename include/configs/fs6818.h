@@ -352,6 +352,9 @@
 /*-----------------------------------------------------------------------
  * SPI
  */
+#define CONFIG_EXYNOS_SPI 
+#define CONFIG_CMD_SPI
+#define CONFIG_HARD_SPI 
 
 #if defined  (CONFIG_SPI)
     #if defined (CONFIG_SPI_MODULE_0)

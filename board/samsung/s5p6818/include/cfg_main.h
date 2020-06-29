@@ -121,7 +121,7 @@ extern struct mipi_reg_val * CFG_DISP_MIPI_INIT_DATA;
 #define CFG_SPI1_OUT_CLK                            30*1000*1000
 
 #define CFG_SPI2_SRC_CLK                            100*1000*1000
-#define CFG_SPI2_OUT_CLK                            30*1000*1000
+#define CFG_SPI2_OUT_CLK                            70*1000*1000
 
 
 /*------------------------------------------------------------------------------

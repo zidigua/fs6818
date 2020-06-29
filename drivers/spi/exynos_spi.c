@@ -10,12 +10,13 @@
 #include <spi.h>
 #include <fdtdec.h>
 #include <asm/arch/clk.h>
-#include <asm/arch/clock.h>
+//#include <asm/arch/clock.h>
 #include <asm/arch/cpu.h>
 #include <asm/arch/gpio.h>
-#include <asm/arch/pinmux.h>
+//#include <asm/arch/pinmux.h>
 #include <asm/arch-exynos/spi.h>
 #include <asm/io.h>
+#include "../../arch/arm/include/asm/arch-exynos/periph.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -28,6 +29,8 @@ struct spi_bus {
 	int node;
 	uint deactivate_delay_us;	/* Delay to wait after deactivate */
 };
+
+#define EXYNOS5_SPI_NUM_CONTROLLERS 3
 
 /* A list of spi buses that we know about */
 static struct spi_bus spi_bus[EXYNOS5_SPI_NUM_CONTROLLERS];
@@ -150,6 +153,7 @@ int spi_claim_bus(struct spi_slave *slave)
 	struct exynos_spi_slave *spi_slave = to_exynos_spi(slave);
 	struct exynos_spi *regs = spi_slave->regs;
 	u32 reg = 0;
+#if 0     // spi的时钟配置在  arch\arm\cpu\armv8\s5p6818\device.c : serial_device_init 中
 	int ret;
 
 	ret = set_spi_clk(spi_slave->periph_id,
@@ -160,7 +164,7 @@ int spi_claim_bus(struct spi_slave *slave)
 	}
 
 	exynos_pinmux_config(spi_slave->periph_id, PINMUX_FLAG_NONE);
-
+#endif 
 	spi_flush_fifo(slave);
 
 	reg = readl(&regs->ch_cfg);
@@ -450,11 +454,8 @@ void spi_cs_deactivate(struct spi_slave *slave)
 
 static inline struct exynos_spi *get_spi_base(int dev_index)
 {
-	if (dev_index < 3)
-		return (struct exynos_spi *)samsung_get_base_spi() + dev_index;
-	else
-		return (struct exynos_spi *)samsung_get_base_spi_isp() +
-					(dev_index - 3);
+	unsigned int address[3] = {PHY_BASEADDR_SSP0_MODULE, PHY_BASEADDR_SSP1_MODULE, PHY_BASEADDR_SSP2_MODULE};
+	return (struct exynos_spi *)address[dev_index];
 }
 
 /*
@@ -547,10 +548,121 @@ struct spi_slave *spi_setup_slave_fdt(const void *blob, int slave_node,
 	return NULL;
 }
 
+#define uint32 unsigned int
+
+/************* GPIOB register**************/
+typedef struct{
+	uint32 OUT;
+	uint32 OUTENB;
+	uint32 DETMODE0;
+	uint32 DETMODE1;
+	uint32 INTENB;
+	uint32 DET;
+	uint32 PAD;
+	uint32 Reserved1;
+	uint32 ALTFN0;
+	uint32 ALTFN1;
+	uint32 DETMODEEX;
+	uint32 Reserved2;
+	uint32 Reserved3;
+	uint32 Reserved4;
+	uint32 Reserved5;
+	uint32 DETENB;
+	uint32 SLEW;
+	uint32 SLEW_DISABLE_DEFAULT;
+	uint32 DRV1;
+	uint32 DRV1_DISABLE_DEFAULT;
+	uint32 DRV0;
+	uint32 DRV0_DISABLE_DEFAULT;
+	uint32 PULLSEL;
+	uint32 PULLSEL_DISABLE_DEFAULT;
+	uint32 PULLENB;
+	uint32 PULLENBD_DISABLE_DEFAULT;
+} gpiob;
+
+#define  GPIOB     (* (volatile gpiob *)0xC001B000)
+
+/************* GPIOC register**************/
+typedef struct{
+	uint32 OUT;
+	uint32 OUTENB;
+	uint32 DETMODE0;
+	uint32 DETMODE1;
+	uint32 INTENB;
+	uint32 DET;
+	uint32 PAD;
+	uint32 Reserved1;
+	uint32 ALTFN0;
+	uint32 ALTFN1;
+	uint32 DETMODEEX;
+	uint32 Reserved2;
+	uint32 Reserved3;
+	uint32 Reserved4;
+	uint32 Reserved5;
+	uint32 DETENB;
+	uint32 SLEW;
+	uint32 SLEW_DISABLE_DEFAULT;
+	uint32 DRV1;
+	uint32 DRV1_DISABLE_DEFAULT;
+	uint32 DRV0;
+	uint32 DRV0_DISABLE_DEFAULT;
+	uint32 PULLSEL;
+	uint32 PULLSEL_DISABLE_DEFAULT;
+	uint32 PULLENB;
+	uint32 PULLENBD_DISABLE_DEFAULT;
+} gpioc;
+
+#define  GPIOC     (* (volatile gpioc *)0xC001C000)
+
+/************* GPIOD register**************/
+typedef struct{
+	uint32 OUT;
+	uint32 OUTENB;
+	uint32 DETMODE0;
+	uint32 DETMODE1;
+	uint32 INTENB;
+	uint32 DET;
+	uint32 PAD;
+	uint32 Reserved1;
+	uint32 ALTFN0;
+	uint32 ALTFN1;
+	uint32 DETMODEEX;
+	uint32 Reserved2;
+	uint32 Reserved3;
+	uint32 Reserved4;
+	uint32 Reserved5;
+	uint32 DETENB;
+	uint32 SLEW;
+	uint32 SLEW_DISABLE_DEFAULT;
+	uint32 DRV1;
+	uint32 DRV1_DISABLE_DEFAULT;
+	uint32 DRV0;
+	uint32 DRV0_DISABLE_DEFAULT;
+	uint32 PULLSEL;
+	uint32 PULLSEL_DISABLE_DEFAULT;
+	uint32 PULLENB;
+	uint32 PULLENBD_DISABLE_DEFAULT;
+} gpiod;
+
+#define  GPIOD     (* (volatile gpiod *)0xC001D000)
 /* Sadly there is no error return from this function */
 void spi_init(void)
 {
 	int count;
+
+	// spi0 GPIO 复用功能配置
+	GPIOC.ALTFN1 = (GPIOC.ALTFN1 & (~(0x3 << 26))) | (1 << 26);
+	GPIOC.ALTFN1 = (GPIOC.ALTFN1 & (~(0x3 << 28))) | (1 << 28);
+	GPIOC.ALTFN1 = (GPIOC.ALTFN1 & (~(0x3 << 30))) | (1 << 30);
+	GPIOD.ALTFN0 = (GPIOD.ALTFN0 & (~(0x3 << 0 ))) | (1 << 0 );
+	GPIOB.ALTFN1 = (GPIOB.ALTFN1 & (~(0x3 << 14))) | (1 << 14);
+	GPIOB.OUTENB = GPIOB.OUTENB | (1 << 23);
+
+	// spi2 GPIO 复用功能配置
+	GPIOC.ALTFN0 = (GPIOC.ALTFN0 & (~(0x3 << 18))) | (2 << 18);
+	GPIOC.ALTFN0 = (GPIOC.ALTFN0 & (~(0x3 << 20))) | (2 << 20);
+	GPIOC.ALTFN0 = (GPIOC.ALTFN0 & (~(0x3 << 22))) | (2 << 22);
+	GPIOC.ALTFN0 = (GPIOC.ALTFN0 & (~(0x3 << 24))) | (2 << 24);
 
 #ifdef CONFIG_OF_CONTROL
 	int node_list[EXYNOS5_SPI_NUM_CONTROLLERS];
