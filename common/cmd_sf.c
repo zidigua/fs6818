@@ -8,26 +8,16 @@
 
 #include <common.h>
 #include <div64.h>
+#include <dm.h>
 #include <malloc.h>
+//#include <mapmem.h>
+#include <spi.h>
 #include <spi_flash.h>
 
 #include <asm/io.h>
-
-#ifndef CONFIG_SF_DEFAULT_SPEED
-# define CONFIG_SF_DEFAULT_SPEED	1000000
-#endif
-#ifndef CONFIG_SF_DEFAULT_MODE
-# define CONFIG_SF_DEFAULT_MODE		SPI_MODE_3
-#endif
-#ifndef CONFIG_SF_DEFAULT_CS
-# define CONFIG_SF_DEFAULT_CS		0
-#endif
-#ifndef CONFIG_SF_DEFAULT_BUS
-# define CONFIG_SF_DEFAULT_BUS		0
-#endif
+#include <dm/device-internal.h>
 
 static struct spi_flash *flash;
-
 
 /*
  * This function computes the length argument for the erase command.
@@ -81,11 +71,25 @@ static ulong bytes_per_second(unsigned int len, ulong start_ms)
 {
 	/* less accurate but avoids overflow */
 	if (len >= ((unsigned int) -1) / 1024)
-		return len / (max(get_timer(start_ms) / 1024, 1));
+		return len / (max(get_timer(start_ms) / 1024, 1UL));
 	else
-		return 1024 * len / max(get_timer(start_ms), 1);
+		return 1024 * len / max(get_timer(start_ms), 1UL);
 }
 
+#ifndef CONFIG_SF_DEFAULT_SPEED
+#   define CONFIG_SF_DEFAULT_SPEED	1000000
+#endif
+#ifndef CONFIG_SF_DEFAULT_MODE
+#   define CONFIG_SF_DEFAULT_MODE	0
+#endif
+#ifndef CONFIG_SF_DEFAULT_CS
+#   define CONFIG_SF_DEFAULT_CS		0
+#endif
+#ifndef CONFIG_SF_DEFAULT_BUS
+#   define CONFIG_SF_DEFAULT_BUS	0
+#endif
+
+	
 static int do_spi_flash_probe(int argc, char * const argv[])
 {
 	unsigned int bus = CONFIG_SF_DEFAULT_BUS;
@@ -93,7 +97,12 @@ static int do_spi_flash_probe(int argc, char * const argv[])
 	unsigned int speed = CONFIG_SF_DEFAULT_SPEED;
 	unsigned int mode = CONFIG_SF_DEFAULT_MODE;
 	char *endp;
+#ifdef CONFIG_DM_SPI_FLASH
+	struct udevice *new, *bus_dev;
+	int ret;
+#else
 	struct spi_flash *new;
+#endif
 
 	if (argc >= 2) {
 		cs = simple_strtoul(argv[1], &endp, 0);
@@ -121,15 +130,31 @@ static int do_spi_flash_probe(int argc, char * const argv[])
 			return -1;
 	}
 
+#ifdef CONFIG_DM_SPI_FLASH
+	/* Remove the old device, otherwise probe will just be a nop */
+	ret = spi_find_bus_and_cs(bus, cs, &bus_dev, &new);
+	if (!ret) {
+		device_remove(new);
+		device_unbind(new);
+	}
+	flash = NULL;
+	ret = spi_flash_probe_bus_cs(bus, cs, speed, mode, &new);
+	if (ret) {
+		printf("Failed to initialize SPI flash at %u:%u (error %d)\n",
+		       bus, cs, ret);
+		return 1;
+	}
+
+	flash = dev_get_uclass_priv(new);
+#else
 	new = spi_flash_probe(bus, cs, speed, mode);
 	if (!new) {
 		printf("Failed to initialize SPI flash at %u:%u\n", bus, cs);
 		return 1;
 	}
 
-	if (flash)
-		spi_flash_free(flash);
 	flash = new;
+#endif
 
 	return 0;
 }
@@ -151,6 +176,8 @@ static int do_spi_flash_probe(int argc, char * const argv[])
 static const char *spi_flash_update_block(struct spi_flash *flash, u32 offset,
 		size_t len, const char *buf, char *cmp_buf, size_t *skipped)
 {
+	char *ptr = (char *)buf;
+
 	debug("offset=%#x, sector_size=%#x, len=%#zx\n",
 	      offset, flash->sector_size, len);
 	/* Read the entire sector so to allow for rewriting */
@@ -166,20 +193,26 @@ static const char *spi_flash_update_block(struct spi_flash *flash, u32 offset,
 	/* Erase the entire sector */
 	if (spi_flash_erase(flash, offset, flash->sector_size))
 		return "erase";
-	/* Write the initial part of the block from the source */
-	if (spi_flash_write(flash, offset, len, buf))
-		return "write";
-	/* If it's a partial sector, rewrite the existing part */
+	/* If it's a partial sector, copy the data into the temp-buffer */
 	if (len != flash->sector_size) {
-		/* Rewrite the original data to the end of the sector */
-		if (spi_flash_write(flash, offset + len,
-				    flash->sector_size - len, &cmp_buf[len]))
-			return "write";
+		memcpy(cmp_buf, buf, len);
+		ptr = cmp_buf;
 	}
+	/* Write one complete sector */
+	if (spi_flash_write(flash, offset, flash->sector_size, ptr))
+		return "write";
 
 	return NULL;
 }
+#define min_t(type, x, y) ({			\
+	type __min1 = (x);			\
+	type __min2 = (y);			\
+	__min1 < __min2 ? __min1: __min2; })
 
+#define max_t(type, x, y) ({			\
+	type __max1 = (x);			\
+	type __max2 = (y);			\
+	__max1 > __max2 ? __max1: __max2; })
 /**
  * Update an area of SPI flash by erasing and writing any blocks which need
  * to change. Existing blocks with the correct data are left unchanged.
@@ -210,7 +243,7 @@ static int spi_flash_update(struct spi_flash *flash, u32 offset,
 		ulong last_update = get_timer(0);
 
 		for (; buf < end && !err_oper; buf += todo, offset += todo) {
-			todo = min(end - buf, flash->sector_size);
+			todo = min_t(size_t, end - buf, flash->sector_size);
 			if (get_timer(last_update) > 100) {
 				printf("   \rUpdating, %zu%% %lu B/s",
 				       100 - (end - buf) / scale,
@@ -408,7 +441,8 @@ static int spi_flash_test(struct spi_flash *flash, uint8_t *buf, ulong len,
 	for (i = 0; i < len; i++) {
 		if (vbuf[i] != 0xff) {
 			printf("Check failed at %d\n", i);
-			print_buffer(i, vbuf + i, 1, min(len - i, 0x40), 0);
+			print_buffer(i, vbuf + i, 1,
+				     min_t(uint, len - i, 0x40), 0);
 			return -1;
 		}
 	}
@@ -430,9 +464,11 @@ static int spi_flash_test(struct spi_flash *flash, uint8_t *buf, ulong len,
 	for (i = 0; i < len; i++) {
 		if (buf[i] != vbuf[i]) {
 			printf("Verify failed at %d, good data:\n", i);
-			print_buffer(i, buf + i, 1, min(len - i, 0x40), 0);
+			print_buffer(i, buf + i, 1,
+				     min_t(uint, len - i, 0x40), 0);
 			printf("Bad data:\n");
-			print_buffer(i, vbuf + i, 1, min(len - i, 0x40), 0);
+			print_buffer(i, vbuf + i, 1,
+				     min_t(uint, len - i, 0x40), 0);
 			return -1;
 		}
 	}

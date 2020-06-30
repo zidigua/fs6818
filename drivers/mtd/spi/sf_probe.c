@@ -352,6 +352,10 @@ static struct spi_flash *spi_flash_probe_slave(struct spi_slave *spi)
 	}
 #endif
 
+#ifdef CONFIG_SPI_FLASH_MTD
+	spi_flash_mtd_register(flash);
+#endif
+
 	/* Release spi bus */
 	spi_release_bus(spi);
 
@@ -386,6 +390,9 @@ struct spi_flash *spi_flash_probe_fdt(const void *blob, int slave_node,
 
 void spi_flash_free(struct spi_flash *flash)
 {
+#ifdef CONFIG_SPI_FLASH_MTD
+	spi_flash_mtd_unregister();
+#endif
 	spi_free_slave(flash->spi);
 	free(flash);
 }

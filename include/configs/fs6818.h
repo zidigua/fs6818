@@ -269,8 +269,10 @@
 	#if defined(CONFIG_CMD_MTDPARTS)
 		#define	CONFIG_MTD_DEVICE y
 		#define	CONFIG_MTD_PARTITIONS
-		#define MTDIDS_DEFAULT				"nand0=mtd-nand"
-		#define MTDPARTS_DEFAULT			"mtdparts=mtd-nand:2m(u-boot),4m(kernel),8m(ramdisk),-(extra)"
+	//	#define MTDIDS_DEFAULT				"nand0=mtd-nand"
+	//	#define MTDPARTS_DEFAULT			"mtdparts=mtd-nand:2m(u-boot),4m(kernel),8m(ramdisk),-(extra)"
+		#define MTDIDS_DEFAULT				"nor0=mtd-nor"
+		#define MTDPARTS_DEFAULT			"mtdparts=mtd-nor:4m(usr),-(extra)"
 	#endif
 
 //	#define CONFIG_MTD_DEBUG
@@ -283,15 +285,19 @@
 #if defined(CONFIG_CMD_MTDPARTS)
 	#define	CONFIG_MTD_DEVICE y
 	#define	CONFIG_MTD_PARTITIONS
-	#define MTDIDS_DEFAULT				"nand0=mtd-nand"
-	#define MTDPARTS_DEFAULT			"mtdparts=mtd-nand:2m(u-boot),4m(kernel),8m(ramdisk),-(extra)"
+	#define MTDIDS_DEFAULT				"nor0=mtd-nor"
+	#define MTDPARTS_DEFAULT			"mtdparts=mtd-nor:4m(usr),-(extra)"
 	#define CONFIG_CMD_SF
 	#define CONFIG_SPI_FLASH
 	#define CONFIG_CMD_SF
 	#define CONFIG_SPI_FLASH_STMICRO
 
+//	#define CONFIG_CMD_FLASH
+//	#define CONFIG_SYS_MAX_FLASH_SECT 	64
+//	#define CONFIG_SYS_MAX_FLASH_BANKS 1
+	#define CONFIG_SPI_FLASH_MTD
 	#define CONFIG_CMD_JFFS2
-	#define CONFIG_JFFS2_DEV			"nand0"
+	#define CONFIG_JFFS2_DEV			"nor0"
 	#define CONFIG_JFFS2_NAND
 	#define CONFIG_JFFS2_PART_OFFSET 	0x000000
 	#define CONFIG_JFFS2_PART_SIZE		0x800000
