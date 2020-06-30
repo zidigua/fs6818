@@ -7,6 +7,7 @@
 
 ifneq (,$(findstring y,$(CONFIG_MTD_DEVICE)$(CONFIG_CMD_NAND)$(CONFIG_CMD_ONENAND)))
 obj-y += mtdcore.o
+obj-y += spi/
 endif
 obj-$(CONFIG_MTD_PARTITIONS) += mtdpart.o
 obj-$(CONFIG_MTD_CONCAT) += mtdconcat.o

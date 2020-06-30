@@ -4,6 +4,7 @@ obj-$(CONFIG_BOOTCOUNT_LIMIT) += bootcount/
 obj-y += crypto/
 obj-$(CONFIG_FPGA) += fpga/
 obj-y += hwmon/
+obj-$(CONFIG_CMD_MTDPARTS) += mtd/
 obj-y += misc/
 obj-y += pcmcia/
 obj-y += dfu/

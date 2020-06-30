@@ -199,7 +199,7 @@ ifeq ($(HOSTARCH),$(ARCH))
 CROSS_COMPILE ?= 
 endif
 
-CROSS_COMPILE ?=  /opt/gcc-4.9.4/bin/arm-linux-
+CROSS_COMPILE ?= /opt/gcc-4.6.4/bin/arm-linux-
 
 # SHELL used by kbuild
 CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
