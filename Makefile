@@ -800,12 +800,20 @@ binary_size_check: u-boot.bin System.map FORCE
 		fi \
 	fi
 
+quiet_cmd_mk6818 = MK6818  ubootpak.bin
+      cmd_mk6818 = $(CURDIR)/tools/mk6818 $(CURDIR)/ubootpak.bin $(srctree)/nsih.txt $(srctree)/S6818_N.bl1 $(CURDIR)/u-boot.bin
+
+quiet_cmd_cat = CAT     win-uboot.bin
+      cmd_cat = cat $(srctree)/512B $(CURDIR)/ubootpak.bin > $(CURDIR)/win-uboot.bin
+
 u-boot.bin: u-boot FORCE
 	$(call if_changed,objcopy)
 	$(call DO_STATIC_RELA,$<,$@,$(CONFIG_SYS_TEXT_BASE))
 	$(BOARD_SIZE_CHECK)
-	$(CURDIR)/tools/mk6818 $(CURDIR)/ubootpak.bin $(srctree)/nsih.txt $(srctree)/S6818_N.bl1 $(CURDIR)/u-boot.bin
-	cat $(srctree)/512B $(CURDIR)/ubootpak.bin > $(CURDIR)/win-uboot.bin
+	$(call cmd,mk6818)
+	$(call cmd,cat)
+#	$(CURDIR)/tools/mk6818 $(CURDIR)/ubootpak.bin $(srctree)/nsih.txt $(srctree)/S6818_N.bl1 $(CURDIR)/u-boot.bin
+#	cat $(srctree)/512B $(CURDIR)/ubootpak.bin > $(CURDIR)/win-uboot.bin
 
 u-boot.ldr:	u-boot
 		$(CREATE_LDR_ENV)

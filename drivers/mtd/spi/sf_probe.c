@@ -338,6 +338,7 @@ static struct spi_flash *spi_flash_probe_slave(struct spi_slave *spi)
 	print_size(flash->page_size, ", erase size ");
 	print_size(flash->erase_size, ", total ");
 	print_size(flash->size, "");
+	printf("%d %d %d \n", flash->page_size, flash->erase_size, flash->size);
 	if (flash->memory_map)
 		printf(", mapped at %p", flash->memory_map);
 	puts("\n");
